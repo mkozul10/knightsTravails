@@ -1,3 +1,54 @@
+function Graph() {
+    return{
+      graph : {},
+  
+    addVertex(vertex) {
+      if (!this.graph[vertex]) {
+        this.graph[vertex] = [];
+      }
+    },
+
+    addVertexes(arr){
+      arr.forEach(vertex => {
+        if(vertex !== null) this.addVertex(vertex);
+      });
+    },
+  
+    addEdge(vertex1, vertex2) {
+      if (this.graph[vertex1] && this.graph[vertex2]) {
+        this.graph[vertex1].push(vertex2);
+        this.graph[vertex2].push(vertex1); 
+      }
+    },
+
+    addEdges(arr,vertex2){
+      arr.forEach(vertex1 => {
+        if(vertex1 !== null) this.addEdge(vertex1,vertex2);
+      });
+    },
+  
+    getNeighbors(vertex) {
+      return this.graph[vertex];
+    },
+  
+    toString() {
+      return JSON.stringify(this.graph, null, 2);
+    },
+
+    checkForEnd(moves,end){
+      let condition=false;
+
+      moves.forEach(move => {
+        if(JSON.stringify(move) === JSON.stringify(end)) condition = true;
+      })
+      return condition;
+    },
+    path(start,end){
+
+    }
+  }
+}
+
 function Board(){
     let board = [];
     const createBoard = () => {
