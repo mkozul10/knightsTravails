@@ -74,9 +74,10 @@ function Graph() {
       return newKey;
     },
 
-    returnPath(finish){
+    returnPath(start,finish){
       let path=[];
       let finishArr;
+      let finishKey;
       let condition = false;
       //searching for finish array
       for(let key in this.graph){
@@ -84,29 +85,31 @@ function Graph() {
         for(let i=0; i < finishArr.length-1; i++){
           if(JSON.stringify(finish) === JSON.stringify(finishArr[i])){
             condition = true;
+            finishKey=key;
+            
             break;
           }
         }
         if(condition) break;
       }
       //end searching for finish array
-
-
+      path.push(JSON.stringify(finish));
+      path.push(this.keyToArrEl(finishKey));
       const key = Object.keys(this.graph);
       let parent = finishArr[finishArr.length - 1];
-      while(parent !== 'null'){        
-        parent = finishArr[finishArr.length - 1];
+      while(parent !== JSON.stringify(start)){        
         for(let i = 0; i<key.length;i++){
           let newKey = this.keyToArrEl(key[i]);
-          if(JSON.stringify(parent) === newKey){
+          if(parent === newKey){
             finishArr = this.graph[key[i]];
+            parent = finishArr[finishArr.length - 1];
             path.push(newKey);
             break;
           }
         }
       }
+      path.push(JSON.stringify(start));
       return path;
-
     }
 }
 }
@@ -173,10 +176,4 @@ while(!end){
 }
 console.timeEnd('Execution Time');
 console.log(myGraph.graph);
-//console.log(myGraph.returnPath(finish));
-
-
- 
-
-
-  
+console.log(myGraph.returnPath(knightStart,finish)); 
