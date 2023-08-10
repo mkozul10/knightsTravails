@@ -17,6 +17,7 @@ function Graph() {
     addVertex(vertex) {
       if (!this.graph[vertex]) {
         this.graph[vertex] = [];
+
       }
     },
 
@@ -27,6 +28,7 @@ function Graph() {
         }
       });
     },
+
     addEdge(vertex1, vertex2) {
         this.graph[vertex2].push(vertex1);
     },
@@ -60,11 +62,51 @@ function Graph() {
 
     checkForPast(el){
       for(let key in this.graph){
-        let newKey = JSON.stringify(key).replace("\"","").replace("\"","");
-        newKey = `[${newKey}]`;
+        let newKey = this.keyToArrEl(key);
         if(newKey === JSON.stringify(el)) return false;
       }
       return true;
+    },
+
+    keyToArrEl(key){
+      let newKey = JSON.stringify(key).replace("\"","").replace("\"","");
+      newKey = `[${newKey}]`;
+      return newKey;
+    },
+
+    returnPath(finish){
+      let path=[];
+      let finishArr;
+      let condition = false;
+      //searching for finish array
+      for(let key in this.graph){
+        finishArr = this.graph[key];
+        for(let i=0; i < finishArr.length-1; i++){
+          if(JSON.stringify(finish) === JSON.stringify(finishArr[i])){
+            condition = true;
+            break;
+          }
+        }
+        if(condition) break;
+      }
+      //end searching for finish array
+
+
+      const key = Object.keys(this.graph);
+      let parent = finishArr[finishArr.length - 1];
+      while(parent !== 'null'){        
+        parent = finishArr[finishArr.length - 1];
+        for(let i = 0; i<key.length;i++){
+          let newKey = this.keyToArrEl(key[i]);
+          if(JSON.stringify(parent) === newKey){
+            finishArr = this.graph[key[i]];
+            path.push(newKey);
+            break;
+          }
+        }
+      }
+      return path;
+
     }
 }
 }
@@ -108,25 +150,33 @@ let knightStart = [6,3];
 let finish = [2,6];
 let starters = [knightStart];
 let knightMoves = Queue();
+let parentQueue = Queue();
 let knightMovess;
 let end = false;
 console.time('Execution Time');
+parentQueue.enqueue(null);
 while(!end){
+  let parent = parentQueue.dequeue();
   for(let i = 0; i < starters.length; i++){
     if(starters[i] !== null && myGraph.checkForPast(starters[i])){ 
       myGraph.addVertex(starters[i]);
       knightMovess = myBoard.makeMoves(starters[i]);
       knightMoves.enqueue(myBoard.makeMoves(starters[i]));
-      myGraph.addEdges(knightMovess,starters[i]);
+      myGraph.addEdges(knightMovess,starters[i],parent);
       end = myGraph.checkForEnd(knightMovess,finish);
       
       if(end) break;
     }
   }
+  for(let i = 0; i < starters.length; i++) parentQueue.enqueue(starters[i]);
   starters = knightMoves.dequeue();
 }
 console.timeEnd('Execution Time');
- console.log(myGraph.graph);
+console.log(myGraph.graph);
+//console.log(myGraph.returnPath(finish));
+
+
+ 
 
 
   
